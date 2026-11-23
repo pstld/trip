@@ -1,132 +1,198 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Поездка</title>
+<title>Новый год</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{--bg:var(--tg-theme-bg-color,#fff);--tx:var(--tg-theme-text-color,#111);--hint:var(--tg-theme-hint-color,#888);--bt:var(--tg-theme-button-color,#2481cc);--bx:var(--tg-theme-button-text-color,#fff);--sec:var(--tg-theme-secondary-bg-color,#f1f1f1)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px system-ui,sans-serif;padding:12px 12px 90px}
-.card{background:var(--sec);border-radius:12px;padding:12px;margin:8px 0}
-h2{margin:18px 0 4px;font-size:18px}
-input,textarea{width:100%;padding:10px;margin:4px 0;border:1px solid var(--hint);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
-button{background:var(--bt);color:var(--bx);border:0;border-radius:8px;padding:8px 12px;font:inherit;margin:3px 3px 3px 0}
-button.g{background:var(--bg);color:var(--tx);border:1px solid var(--hint)}
-button.on{outline:2px solid var(--bt)}
-.hint{color:var(--hint);font-size:14px}
-a{color:var(--bt)}
-.done{text-decoration:line-through;opacity:.5}
-nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--sec);padding-bottom:env(safe-area-inset-bottom,0)}
-nav button{flex:1;background:none;color:var(--hint);border-radius:0;margin:0;padding:10px 0;font-size:12px}
-nav button.on{color:var(--bt);outline:0;font-weight:600}
+:root{--bg:var(--tg-theme-bg-color,#fff);--tx:var(--tg-theme-text-color,#111);--hint:var(--tg-theme-hint-color,#8e8e93);--ac:var(--tg-theme-button-color,#2f80ed);--ax:var(--tg-theme-button-text-color,#fff);--cd:var(--tg-theme-secondary-bg-color,#f2f2f7)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.35 -apple-system,system-ui,sans-serif;padding:0 14px 150px}
+button{font:inherit;border:0;cursor:pointer}
+.top{display:flex;justify-content:space-between;align-items:center;padding:12px 0 0;color:var(--hint);font-size:14px}
+h1{font-size:28px;margin:6px 0 2px}
+.sub{color:var(--hint);font-size:14px;margin:0}
+h3{font-size:15px;margin:22px 0 8px}
+.card{background:var(--cd);border-radius:16px;padding:14px;margin:0 0 10px}
+.t{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.t b{font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 6px}
+.v{background:var(--bg);color:var(--tx);border:2px solid transparent;border-radius:14px;padding:8px 0;display:flex;flex-direction:column;align-items:center}
+.v span{font-size:22px}
+.v i{font-style:normal;font-size:12px;color:var(--hint)}
+.v.on{border-color:var(--ac)}
+.big{width:100%;background:var(--ac);color:var(--ax);border-radius:14px;padding:14px;font-weight:600;margin-top:8px}
+.chip{background:var(--bg);color:var(--tx);border-radius:20px;padding:6px 12px;font-size:14px;margin:4px 6px 0 0}
+.chip.on{background:var(--ac);color:var(--ax)}
+.ic{background:none;color:var(--hint);padding:2px 6px}
+input,textarea{width:100%;font:inherit;padding:12px;margin:5px 0;border:0;border-radius:12px;background:var(--cd);color:var(--tx)}
+.empty{color:var(--hint);text-align:center;padding:18px;border:1px dashed var(--hint);border-radius:16px;margin-bottom:10px}
+.fab{position:fixed;right:16px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;background:var(--ac);color:var(--ax);font-size:32px;box-shadow:0 4px 14px #0004}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--cd);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;background:none;color:var(--hint);padding:9px 0 8px;font-size:11px}
+nav button span{display:block;font-size:22px}
+nav .on{color:var(--ac)}
+#sh{position:fixed;inset:0;background:#0006;display:none;align-items:flex-end;z-index:9}
+#sh>div{background:var(--bg);width:100%;border-radius:22px 22px 0 0;padding:18px 16px calc(24px + env(safe-area-inset-bottom,0px));max-height:85vh;overflow:auto}
+#ts{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;display:none;z-index:99}
+.row{display:flex;align-items:center;gap:12px;background:var(--cd);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.row>div{flex:1}
+.row .sub{display:block}
+.row.done{opacity:.5}
+.row.done b{text-decoration:line-through}
+.chk{width:30px;height:30px;border-radius:50%;border:2px solid var(--hint);background:none;color:var(--ax);font-size:16px;flex:none}
+.row.done .chk{background:var(--ac);border-color:var(--ac)}
+summary{color:var(--hint);padding:8px 0}
+a{color:var(--ac)}
 </style></head><body>
-<div id="app"><p class="hint">Загрузка…</p></div><nav id="nav"></nav>
+<div id="app"><p class="sub" style="padding-top:20px">Загрузка…</p></div>
+<button class="fab" onclick="fab()">+</button>
+<nav id="nav"></nav>
+<div id="sh" onclick="if(event.target==this)shut()"><div></div></div>
+<div id="ts"></div>
 <script>
 const U='https://dqcisncapmfwelocfock.supabase.co/rest/v1/',K='sb_publishable_Gg_1c82Y9oZ7P7Mr_22Dcg_qWqeO1wj';
 const tg=window.Telegram&&Telegram.WebApp;if(tg){tg.ready();tg.expand()}
-let me={id:'',name:''},tab='places',M=[];
+let me,tab='places',M=[],S={people:4},KEYS=[],SHM={},CK={};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const url=s=>/^https?:\/\//i.test(s||'')?s:'';
+const nl=s=>s&&!/^https?:\/\//i.test(s)?'https://'+s:s;
 const val=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
 async function api(p,m='GET',b,pr='return=representation'){
  const r=await fetch(U+p,{method:m,headers:{apikey:K,'Content-Type':'application/json',Prefer:pr},body:b?JSON.stringify(b):undefined});
  const t=await r.text();
  if(!r.ok){alert('Ошибка: '+t);throw new Error(t)}
  return t?JSON.parse(t):null}
-const nm=id=>(M.find(x=>x.user_id==id)||{}).name||'?';
-const act=async f=>{await f();await render()};
-const link=(l,t)=>url(l)?`<a href="${esc(l)}" target="_blank">${esc(t)}</a>`:esc(t);
+const up='resolution=merge-duplicates,return=minimal';
+const nm=id=>(M.find(x=>x.user_id==id)||{}).name||'кто-то';
+const toast=m=>{const t=$('#ts');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',1800)};
+const sheet=h=>{$('#sh').style.display='flex';$('#sh>div').innerHTML=h};
+const shut=()=>$('#sh').style.display='none';
+const act=async(f,m)=>{await f();shut();await render();if(m)toast(m)};
 const del=(t,id)=>confirm('Удалить?')&&act(()=>api(t+'?id=eq.'+id,'DELETE'));
-const T=[['places','📍','Места'],['food','🍽','Еда'],['home','🏠','Жильё'],['money','💰','Деньги'],['wish','🎁','Желания']];
+const head=(t,s)=>`<h1>${t}</h1><p class="sub">${s}</p>`;
+const empty=t=>`<div class="empty">${t}</div>`;
+const link=(l,t)=>url(l)?`<a href="${esc(l)}" target="_blank">${esc(t)}</a>`:esc(t);
+const T=[['places','📍','Места'],['food','🍽','Еда'],['money','💰','Деньги'],['wish','🎁','Желания']];
 const R={};
-
-function nav(){$('#nav').innerHTML=T.map(t=>`<button class="${t[0]==tab?'on':''}" onclick="go('${t[0]}')">${t[1]}<br>${t[2]}</button>`).join('')}
-async function go(t){tab=t;nav();await render()}
-async function render(){M=await api('members?select=*&order=name');$('#app').innerHTML=await R[tab]()}
+function nav(){$('#nav').innerHTML=T.map(t=>`<button class="${t[0]==tab?'on':''}" onclick="go('${t[0]}')"><span>${t[1]}</span>${t[2]}</button>`).join('')}
+async function go(t){tab=t;nav();scrollTo(0,0);await render()}
+async function render(){
+ const [m,s]=await Promise.all([api('members?select=*&order=name'),api('settings?id=eq.1')]);
+ M=m;S=s[0]||{people:4};KEYS=[];
+ const h=await R[tab]();
+ $('#app').innerHTML=`<div class="top"><span>🎄 Новый год ’27</span><button class="chip" onclick="setPeople()">👥 ${S.people} чел.</button></div>`+h}
+const fab=()=>({places:shPlace,food:shFood,money:shExp,wish:shWish})[tab]();
+const setPeople=()=>{const v=parseInt(prompt('Сколько человек едет?',S.people));if(v>0)act(()=>api('settings?id=eq.1','PATCH',{people:v}),'Сохранено ✓')};
 
 /* Места */
 R.places=async()=>{
  const [P,V]=await Promise.all([api('places?select=*&order=id'),api('votes?select=*')]);
  const sc=p=>V.filter(x=>x.place_id==p.id).reduce((s,x)=>s+x.value,0);
- const card=p=>{const v=V.filter(x=>x.place_id==p.id),c=n=>v.filter(x=>x.value==n).length,my=(v.find(x=>x.user_id==me.id)||{}).value,s=sc(p);
-  return `<div class="card"><b>${esc(p.title)}</b> ${url(p.link)?link(p.link,'ссылка'):''}
-  <div class="hint">добавил(а) ${esc(nm(p.added_by))} · итог ${s>0?'+':''}${s}</div>
-  <div>${[[1,'👍'],[0,'😐'],[-1,'👎']].map(([n,e])=>`<button class="g ${my===n?'on':''}" onclick="vote(${p.id},${n})">${e} ${c(n)}</button>`).join('')}</div>
-  <div>${p.status=='discussing'?`<button onclick="st(${p.id},'chosen')">✅ Выбрать</button><button class="g" onclick="st(${p.id},'rejected')">❌ Отклонить</button>`:`<button class="g" onclick="st(${p.id},'discussing')">↩ В обсуждение</button>`}<button class="g" onclick="del('places',${p.id})">🗑</button></div></div>`};
- const by=s=>P.filter(p=>p.status==s).sort((a,b)=>sc(b)-sc(a)).map(card).join('')||'<p class="hint">Пока пусто</p>';
- return `<h2>✅ Идём сюда</h2>${by('chosen')}<h2>🗳 Обсуждаем</h2>${by('discussing')}
- <h2>➕ Новое место</h2><input id="t" placeholder="Название"><input id="l" placeholder="Ссылка (необязательно)"><button onclick="addPlace()">Добавить место</button>
- <h2>❌ Отклонено</h2>${by('rejected')}`};
-const vote=(id,n)=>act(()=>api('votes?on_conflict=place_id,user_id','POST',{place_id:id,user_id:me.id,value:n},'resolution=merge-duplicates,return=minimal'));
-const st=(id,s)=>act(()=>api('places?id=eq.'+id,'PATCH',{status:s}));
-const addPlace=()=>val('t')&&act(()=>api('places','POST',{title:val('t'),link:val('l'),added_by:me.id}));
+ const card=p=>{const v=V.filter(x=>x.place_id==p.id),c=n=>v.filter(x=>x.value==n).length,my=(v.find(x=>x.user_id==me.id)||{}).value;
+  return `<div class="card"><div class="t"><b>${esc(p.title)}</b><button class="ic" onclick="del('places',${p.id})">🗑</button></div>
+  <div class="sub">${url(p.link)?link(p.link,'Открыть ссылку')+' · ':''}предложил(а) ${esc(nm(p.added_by))}</div>
+  <div class="grid">${[[1,'👍','Хочу'],[0,'😐','Можно'],[-1,'👎','Не хочу']].map(([n,e,l])=>`<button class="v ${my===n?'on':''}" onclick="vote(${p.id},${n})"><span>${e}</span><b>${c(n)}</b><i>${l}</i></button>`).join('')}</div>
+  <div class="sub">Проголосовали ${v.length} из ${S.people}</div>
+  ${p.status=='discussing'?`<button class="chip on" onclick="st(${p.id},'chosen')">✅ Выбрать</button><button class="chip" onclick="st(${p.id},'rejected')">❌ Отклонить</button>`:`<button class="chip" onclick="st(${p.id},'discussing')">↩ Вернуть в обсуждение</button>`}</div>`};
+ const by=s=>P.filter(p=>p.status==s).sort((a,b)=>sc(b)-sc(a));
+ const ch=by('chosen'),di=by('discussing'),re=by('rejected');
+ return head('Места','Предлагайте варианты кнопкой + и голосуйте. Решили — жмите «Выбрать».')
+ +'<h3>✅ Идём сюда</h3>'+(ch.map(card).join('')||empty('Пока ничего не выбрано'))
+ +'<h3>🗳 Голосуем</h3>'+(di.map(card).join('')||empty('Нажмите +, чтобы предложить место'))
+ +(re.length?`<details><summary>❌ Отклонено (${re.length})</summary>${re.map(card).join('')}</details>`:'')};
+const shPlace=()=>sheet('<h3 style="margin-top:0">Новое место</h3><input id="t" placeholder="Название"><input id="l" placeholder="Ссылка (необязательно)"><button class="big" onclick="addPlace()">Добавить место</button>');
+const addPlace=()=>val('t')&&act(()=>api('places','POST',{title:val('t'),link:nl(val('l')),added_by:me.id}),'Место добавлено ✓');
+const vote=(id,n)=>act(()=>api('votes?on_conflict=place_id,user_id','POST',{place_id:id,user_id:me.id,value:n},up));
+const st=(id,s)=>act(()=>api('places?id=eq.'+id,'PATCH',{status:s}),s=='chosen'?'Выбрано ✅':null);
 
 /* Еда */
+const SZ={S:.7,M:1,L:1.4};
+const RC=[
+['олив','картофель:80:г;морковь:40:г;яйца:0.5:шт;солёные огурцы:40:г;зелёный горошек:30:г;варёная колбаса:80:г;майонез:40:г'],
+['шуб,селедка под','солёная сельдь:70:г;свёкла:80:г;картофель:60:г;морковь:40:г;яйца:0.5:шт;лук:20:г;майонез:50:г'],
+['мимоз','рыбные консервы:50:г;картофель:50:г;морковь:40:г;яйца:1:шт;сыр:30:г;лук:15:г;майонез:40:г'],
+['по-французски,по французски','свинина:150:г;картофель:100:г;лук:40:г;сыр:50:г;майонез:30:г'],
+['цезар','куриное филе:60:г;салат романо:40:г;сухарики:15:г;пармезан:15:г;соус цезарь:30:г'],
+['грече','огурцы:60:г;помидоры:80:г;сыр фета:50:г;оливки:20:г;красный лук:15:г;оливковое масло:10:мл'],
+['канап,бутерброд','багет:40:г;сливочный сыр:20:г;красная рыба:30:г'],
+['шашлык','мясо для шашлыка:250:г;лук:40:г'],
+['мандарин','мандарины:250:г'],
+['нарезк','сыр:40:г;колбаса:40:г']];
+const parse=s=>s.split(';').map(x=>x.split(':')).map(([n,q,u])=>({n,q:+q,u}));
+function ings(d){
+ if(Array.isArray(d.ingredients))return d.ingredients;
+ const t=d.title.toLowerCase().replace(/ё/g,'е'),r=RC.find(([k])=>k.split(',').some(w=>t.includes(w)));
+ return r?parse(r[1]):null}
+function fmt(q,u){
+ if(u=='г')return q>=1000?(q/1000).toFixed(1).replace(/\.0$/,'')+' кг':Math.round(q/10)*10+' г';
+ if(u=='мл')return q>=1000?(q/1000).toFixed(1).replace(/\.0$/,'')+' л':Math.round(q/10)*10+' мл';
+ if(u=='шт')return Math.ceil(q)+' шт';
+ return (Math.round(q*10)/10)+' '+u}
 R.food=async()=>{
- const [D,P]=await Promise.all([api('dishes?select=*&order=id'),api('products?select=*&order=bought,id')]);
- return `<h2>🍽 Меню</h2>${D.map(d=>`<div class="card"><b>${esc(d.title)}</b> <span class="hint">готовит: ${esc(d.cook?nm(d.cook):'—')}</span>
-  <div class="hint" style="white-space:pre-line">${esc(typeof d.ingredients=='string'?d.ingredients:'')}</div>
-  <button onclick="cook(${d.id})">🍳 Беру</button><button class="g" onclick="addIng(${d.id})">🛒 В продукты</button><button class="g" onclick="del('dishes',${d.id})">🗑</button></div>`).join('')||'<p class="hint">Блюд пока нет</p>'}
- <input id="dt" placeholder="Блюдо"><textarea id="di" rows="3" placeholder="Продукты по строке: название, количество, единица&#10;например: лук, 2, шт"></textarea><button onclick="addDish()">Добавить блюдо</button>
- <h2>🛒 Продукты</h2>${P.map(p=>`<div class="card"><label class="${p.bought?'done':''}"><input type="checkbox" style="width:auto" ${p.bought?'checked':''} onchange="buy(${p.id},this.checked)"> ${esc(p.name)} — <b>${p.qty==null?'':+p.qty} ${esc(p.unit)}</b></label>
-  <div><button class="g" onclick="buyer(${p.id})">${p.buyer?'🛍 '+esc(nm(p.buyer)):'Куплю я'}</button><button class="g" onclick="del('products',${p.id})">🗑</button></div></div>`).join('')||'<p class="hint">Список пуст</p>'}
- <div class="card"><input id="pn" placeholder="Продукт"><input id="pq" type="number" inputmode="decimal" placeholder="Количество"><input id="pu" placeholder="Единица (кг, шт, л)"><button onclick="addProd()">Добавить продукт</button></div>`};
-const addDish=()=>val('dt')&&act(()=>api('dishes','POST',{title:val('dt'),ingredients:val('di')}));
-const cook=id=>act(()=>api('dishes?id=eq.'+id,'PATCH',{cook:me.id}));
-const buy=(id,v)=>act(()=>api('products?id=eq.'+id,'PATCH',{bought:v}));
-const buyer=id=>act(()=>api('products?id=eq.'+id,'PATCH',{buyer:me.id}));
-const addProd=()=>val('pn')&&act(()=>api('products','POST',{name:val('pn'),qty:parseFloat(val('pq'))||null,unit:val('pu')}));
-async function addIng(id){
- if(!confirm('Добавить продукты этого блюда в список?'))return;
- const d=(await api('dishes?id=eq.'+id))[0],ex=await api('products?select=*');
- for(const line of String(d.ingredients||'').split('\n')){
-  const [n,q,u]=line.split(',').map(s=>s.trim());if(!n)continue;
-  const qty=parseFloat((q||'').replace(',','.'))||null,f=ex.find(p=>!p.bought&&p.name.toLowerCase()==n.toLowerCase()&&(p.unit||'')==(u||''));
-  if(f&&qty&&f.qty!=null){f.qty=+f.qty+qty;await api('products?id=eq.'+f.id,'PATCH',{qty:f.qty})}
-  else{const r=await api('products','POST',{name:n,qty,unit:u||'',dish_id:id});ex.push(r[0])}}
- render()}
-
-/* Жильё */
-R.home=async()=>{
- const h=(await api('housing?id=eq.1'))[0]||{};
- const f=(k,l)=>`<label class="hint">${l}</label><input id="h_${k}" value="${esc(h[k])}">`;
- return `<h2>🏠 Жильё</h2><div class="card">${f('address','Адрес')}${f('checkin','Заезд и выезд')}${f('host','Контакт хозяина')}${f('wifi','Wi-Fi')}
- <label class="hint">Заметки (как найти, этаж)</label><textarea id="h_notes" rows="4">${esc(h.notes)}</textarea>
- <button onclick="saveH()">Сохранить</button>${h.address?'<button class="g" onclick="openMap()">🗺 На карте</button>':''}</div>`};
-const saveH=()=>act(()=>api('housing?id=eq.1','PATCH',{address:val('h_address'),checkin:val('h_checkin'),host:val('h_host'),wifi:val('h_wifi'),notes:val('h_notes')}));
-function openMap(){const u='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(val('h_address'));tg?tg.openLink(u):open(u)}
+ const [D,X,SH]=await Promise.all([api('dishes?select=*&order=id'),api('products?select=*&order=id'),api('shop?select=*')]);
+ const A={};SHM={};SH.forEach(s=>SHM[s.key]=s);
+ const add=(n,u,q,x)=>{const k=(n+'|'+u).toLowerCase(),a=A[k]=A[k]||{n,u,q:0};a.q+=q;if(x)a.x=x;else a.dish=1};
+ const dc=D.map(d=>{CK[d.id]=d.cook;const L=ings(d),k=SZ[d.size||'M'];if(L)L.forEach(i=>add(i.n,i.u,i.q*S.people*k));return{d,L,k}});
+ X.forEach(p=>add(p.name,p.unit||'',+p.qty||0,p.id));
+ const rows=Object.entries(A).map(([k,a])=>{KEYS.push(k);const i=KEYS.length-1,s=SHM[k]||{};
+  return `<div class="row ${s.done?'done':''}"><button class="chk" onclick="tick(${i})">${s.done?'✓':''}</button><div><b>${esc(a.n)}</b><span class="sub">${a.q?fmt(a.q,a.u):''}</span></div>${a.x&&!a.dish?`<button class="ic" onclick="del('products',${a.x})">🗑</button>`:''}<button class="chip" onclick="who(${i})">${s.buyer?'🛍 '+esc(nm(s.buyer)):'Куплю я'}</button></div>`});
+ return head('Еда','Добавьте блюда кнопкой +, а продукты посчитаются сами на всех. Выберите размер порции.')
+ +'<h3>🍽 Меню</h3>'+(dc.map(({d,L,k})=>`<div class="card"><div class="t"><b>${esc(d.title)}</b><button class="ic" onclick="del('dishes',${d.id})">🗑</button></div>
+  <div class="sub">на ${S.people} чел. · готовит: ${d.cook?esc(nm(d.cook)):'пока никто'}</div>
+  <div class="grid">${[['S','Малая'],['M','Обычная'],['L','Большая']].map(([z,l])=>`<button class="v ${(d.size||'M')==z?'on':''}" onclick="sz(${d.id},'${z}')"><i style="font-size:14px;color:var(--tx)">${l}</i></button>`).join('')}</div>
+  ${L?`<details><summary>Состав порции</summary>${L.map(i=>`<div class="sub">${esc(i.n)} — ${fmt(i.q*S.people*k,i.u)}</div>`).join('')}</details>`:`<div class="sub">Состав неизвестен, продукты не посчитаны</div><button class="chip" onclick="shIng(${d.id})">Указать состав</button>`}
+  <button class="chip ${d.cook==me.id?'on':''}" onclick="cook(${d.id})">🍳 Готовлю я</button></div>`).join('')||empty('Пока нет блюд. Нажмите +'))
+ +'<h3>🛒 Что купить</h3>'+(rows.join('')||empty('Список появится, когда добавите блюда'))};
+const sz=(id,z)=>act(()=>api('dishes?id=eq.'+id,'PATCH',{size:z}));
+const cook=id=>act(()=>api('dishes?id=eq.'+id,'PATCH',{cook:CK[id]==me.id?null:me.id}));
+const tick=i=>{const k=KEYS[i];return act(()=>api('shop?on_conflict=key','POST',{key:k,done:!(SHM[k]||{}).done},up))};
+const who=i=>{const k=KEYS[i];return act(()=>api('shop?on_conflict=key','POST',{key:k,buyer:(SHM[k]||{}).buyer==me.id?null:me.id},up))};
+const shFood=()=>sheet(`<h3 style="margin-top:0">Новое блюдо</h3><input id="dt" placeholder="Например: Оливье"><p class="sub">Для популярных блюд (оливье, шуба, мимоза, цезарь, мандарины…) продукты подставятся сами.</p><button class="big" onclick="addDish()">Добавить блюдо</button>
+ <h3>Или отдельный продукт</h3><input id="pn" placeholder="Продукт"><input id="pq" type="number" inputmode="decimal" placeholder="Количество"><input id="pu" placeholder="Единица (кг, шт, л)"><button class="big" onclick="addProd()">Добавить продукт</button>`);
+const addDish=()=>val('dt')&&act(()=>api('dishes','POST',{title:val('dt')}),'Блюдо добавлено ✓');
+const addProd=()=>val('pn')&&act(()=>api('products','POST',{name:val('pn'),qty:parseFloat(val('pq'))||null,unit:val('pu')}),'Продукт добавлен ✓');
+const shIng=id=>sheet(`<h3 style="margin-top:0">Состав на 1 человека</h3><p class="sub">Каждый продукт с новой строки: название, количество, единица (г, мл, шт).</p><textarea id="ig" rows="6" placeholder="картофель, 100, г&#10;майонез, 30, г"></textarea><button class="big" onclick="saveIng(${id})">Сохранить состав</button>`);
+const saveIng=id=>{const L=val('ig').split('\n').map(l=>l.split(',').map(s=>s.trim())).filter(a=>a[0]&&parseFloat(a[1])).map(a=>({n:a[0],q:parseFloat(a[1]),u:a[2]||'шт'}));
+ return L.length?act(()=>api('dishes?id=eq.'+id,'PATCH',{ingredients:L}),'Состав сохранён ✓'):toast('Напишите хотя бы одну строку')};
 
 /* Деньги */
 R.money=async()=>{
  const E=await api('expenses?select=*&order=id.desc');
- const tot=E.reduce((s,e)=>s+ +e.amount,0),sh=tot/(M.length||1);
- const bal=M.map(m=>({n:m.name,b:E.filter(e=>e.paid_by==m.user_id).reduce((s,e)=>s+ +e.amount,0)-sh}));
- const D=bal.filter(x=>x.b<-0.5),C=bal.filter(x=>x.b>0.5),L=[];
+ const tot=E.reduce((s,e)=>s+ +e.amount,0),share=tot/S.people,miss=Math.max(0,S.people-M.length);
+ const B=M.map(m=>({n:m.name,b:E.filter(e=>e.paid_by==m.user_id).reduce((s,e)=>s+ +e.amount,0)-share}));
+ if(miss)B.push({n:`Ещё не зашли (${miss})`,b:-share*miss});
+ const D=B.filter(x=>x.b<-0.5),C=B.filter(x=>x.b>0.5),L=[];
  for(const d of D)for(const c of C){const x=Math.min(-d.b,c.b);if(x>0.5){L.push(`${esc(d.n)} → ${esc(c.n)}: <b>${Math.round(x)}</b>`);d.b+=x;c.b-=x}}
- return `<h2>💰 Расходы</h2><div class="card"><b>Всего: ${Math.round(tot)}</b> <span class="hint">(делим на ${M.length})</span><br>${L.length?L.join('<br>'):'<span class="hint">Все в расчёте</span>'}</div>
- ${E.map(e=>`<div class="card">${esc(e.title)}: <b>${+e.amount}</b> <span class="hint">платил(а) ${esc(nm(e.paid_by))}</span> <button class="g" onclick="del('expenses',${e.id})">🗑</button></div>`).join('')}
- <h2>➕ Новая трата</h2><input id="et" placeholder="За что"><input id="ea" type="number" inputmode="decimal" placeholder="Сумма"><button onclick="addExp()">Добавить (платил(а) я)</button>`};
-const addExp=()=>val('et')&&+val('ea')&&act(()=>api('expenses','POST',{title:val('et'),amount:+val('ea'),paid_by:me.id}));
+ return head('Деньги','Записывайте, кто сколько заплатил, а приложение посчитает, кто кому должен.')
+ +`<div class="card"><b>Всего потрачено: ${Math.round(tot)}</b><div class="sub">На каждого: ${Math.round(share)}</div><h3 style="margin:12px 0 4px">Кто кому переводит</h3>${L.length?L.join('<br>'):'<span class="sub">Пока все в расчёте</span>'}</div>`
+ +'<h3>🧾 Траты</h3>'+(E.map(e=>`<div class="row"><div><b>${esc(e.title)}</b><span class="sub">платил(а) ${esc(nm(e.paid_by))}</span></div><b>${+e.amount}</b><button class="ic" onclick="del('expenses',${e.id})">🗑</button></div>`).join('')||empty('Трат пока нет. Нажмите +'))};
+const shExp=()=>sheet('<h3 style="margin-top:0">Новая трата</h3><input id="et" placeholder="За что"><input id="ea" type="number" inputmode="decimal" placeholder="Сумма"><button class="big" onclick="addExp()">Записать (платил(а) я)</button>');
+const addExp=()=>val('et')&&+val('ea')&&act(()=>api('expenses','POST',{title:val('et'),amount:+val('ea'),paid_by:me.id}),'Трата записана ✓');
 
 /* Желания */
 R.wish=async()=>{
  const W=await api('wishes?select=*&order=id');
- return '<h2>🎁 Желания</h2>'+M.map(m=>{const mine=m.user_id==me.id,ws=W.filter(w=>w.owner_id==m.user_id);
-  return `<div class="card"><b>${esc(m.name)}</b>${mine?' (я)':''}<br>
-  ${mine?`<input id="wu" placeholder="Ссылка на мой вишлист" value="${esc(m.wishlist_url)}"><button class="g" onclick="saveWu()">Сохранить ссылку</button>`:(url(m.wishlist_url)?link(m.wishlist_url,'Открыть вишлист'):'<span class="hint">Ссылки пока нет</span>')}
-  ${ws.map(w=>`<div>• ${link(w.link,w.title)} ${mine?`<button class="g" onclick="del('wishes',${w.id})">🗑</button>`:(w.reserved_by?(w.reserved_by==me.id?`<button class="g" onclick="rsv(${w.id},1)">Отменить бронь</button>`:'<span class="hint">🎁 уже берут</span>'):`<button class="g" onclick="rsv(${w.id})">🎁 Беру</button>`)}</div>`).join('')}
-  ${mine?'<input id="wt" placeholder="Что хочу"><input id="wl" placeholder="Ссылка (необязательно)"><button onclick="addW()">Добавить</button>':''}</div>`}).join('')};
-const saveWu=()=>act(()=>api('members?user_id=eq.'+me.id,'PATCH',{wishlist_url:val('wu')}));
-const addW=()=>val('wt')&&act(()=>api('wishes','POST',{owner_id:me.id,title:val('wt'),link:val('wl')}));
+ return head('Желания','Оставьте ссылку на свой вишлист или впишите желания. Остальные могут «забронировать» подарок, вы этого не увидите.')+'<h3></h3>'+M.map(m=>{
+  const mine=m.user_id==me.id,ws=W.filter(w=>w.owner_id==m.user_id);
+  return `<div class="card"><b>${esc(m.name)}${mine?' (вы)':''}</b><br>
+  ${url(m.wishlist_url)?`<div style="margin:6px 0">🔗 ${link(m.wishlist_url,'Открыть вишлист')} ${mine?'<button class="chip" onclick="shLink()">Изменить</button>':''}</div>`:(mine?'<button class="chip on" onclick="shLink()">+ Добавить ссылку на вишлист</button>':'<div class="sub">Ссылки пока нет</div>')}
+  ${ws.map(w=>`<div class="row"><div>${link(w.link,w.title)}</div>${mine?`<button class="ic" onclick="del('wishes',${w.id})">🗑</button>`:(w.reserved_by?(w.reserved_by==me.id?`<button class="chip on" onclick="rsv(${w.id},1)">Бронь ✓</button>`:'<span class="sub">🎁 уже берут</span>'):`<button class="chip" onclick="rsv(${w.id})">🎁 Беру</button>`)}</div>`).join('')}</div>`}).join('')};
+const shLink=()=>sheet(`<h3 style="margin-top:0">Ссылка на мой вишлист</h3><input id="wu" placeholder="https://…" value="${esc((M.find(x=>x.user_id==me.id)||{}).wishlist_url)}"><button class="big" onclick="saveWu()">Сохранить</button>`);
+const saveWu=()=>act(()=>api('members?user_id=eq.'+me.id,'PATCH',{wishlist_url:nl(val('wu'))}),'Ссылка сохранена ✓');
+const shWish=()=>sheet('<h3 style="margin-top:0">Что я хочу</h3><input id="wt" placeholder="Название"><input id="wl" placeholder="Ссылка (необязательно)"><button class="big" onclick="addW()">Добавить желание</button>');
+const addW=()=>val('wt')&&act(()=>api('wishes','POST',{owner_id:me.id,title:val('wt'),link:nl(val('wl'))}),'Желание добавлено ✓');
 const rsv=(id,off)=>act(()=>api('wishes?id=eq.'+id,'PATCH',{reserved_by:off?null:me.id}));
 
 /* Старт */
 (async()=>{
  const u=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;
- if(u)me={id:String(u.id),name:u.first_name||'Без имени'};
- else{let id=localStorage.getItem('uid');if(!id){id='w'+Date.now();localStorage.setItem('uid',id);localStorage.setItem('nm',prompt('Как тебя зовут?')||'Гость')}me={id,name:localStorage.getItem('nm')}}
- await api('members?on_conflict=user_id','POST',{user_id:me.id,name:me.name},'resolution=merge-duplicates,return=minimal');
+ if(!u){$('#app').innerHTML='<p style="padding-top:30px">Откройте приложение из Telegram: чат с ботом → кнопка «Открыть».</p>';return}
+ me={id:String(u.id),name:u.first_name||'Без имени'};
+ const [m,s]=await Promise.all([api('members?select=user_id'),api('settings?id=eq.1')]);
+ S=s[0]||{people:4};
+ if(m.some(x=>x.user_id==me.id))await api('members?user_id=eq.'+me.id,'PATCH',{name:me.name});
+ else if(m.length<S.people)await api('members','POST',{user_id:me.id,name:me.name});
  nav();await render();
- setInterval(()=>{if(!/INPUT|TEXTAREA/.test(document.activeElement.tagName))render()},15000)})();
+ setInterval(()=>{if($('#sh').style.display!='flex'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName))render()},15000)})();
 </script></body></html>
