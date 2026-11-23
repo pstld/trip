@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Поездка</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:var(--tg-theme-bg-color,#fff);--tx:var(--tg-theme-text-color,#111);--hint:var(--tg-theme-hint-color,#888);--bt:var(--tg-theme-button-color,#2481cc);--bx:var(--tg-theme-button-text-color,#fff);--sec:var(--tg-theme-secondary-bg-color,#f1f1f1)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px system-ui,sans-serif;padding:12px 12px 90px}
+.card{background:var(--sec);border-radius:12px;padding:12px;margin:8px 0}
+h2{margin:18px 0 4px;font-size:18px}
+input,textarea{width:100%;padding:10px;margin:4px 0;border:1px solid var(--hint);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+button{background:var(--bt);color:var(--bx);border:0;border-radius:8px;padding:8px 12px;font:inherit;margin:3px 3px 3px 0}
+button.g{background:var(--bg);color:var(--tx);border:1px solid var(--hint)}
+button.on{outline:2px solid var(--bt)}
+.hint{color:var(--hint);font-size:14px}
+a{color:var(--bt)}
+.done{text-decoration:line-through;opacity:.5}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--sec);padding-bottom:env(safe-area-inset-bottom,0)}
+nav button{flex:1;background:none;color:var(--hint);border-radius:0;margin:0;padding:10px 0;font-size:12px}
+nav button.on{color:var(--bt);outline:0;font-weight:600}
+</style></head><body>
+<div id="app"><p class="hint">Загрузка…</p></div><nav id="nav"></nav>
+<script>
+const U='https://dqcisncapmfwelocfock.supabase.co/rest/v1/',K='sb_publishable_Gg_1c82Y9oZ7P7Mr_22Dcg_qWqeO1wj';
+const tg=window.Telegram&&Telegram.WebApp;if(tg){tg.ready();tg.expand()}
+let me={id:'',name:''},tab='places',M=[];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const url=s=>/^https?:\/\//i.test(s||'')?s:'';
+const val=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
+async function api(p,m='GET',b,pr='return=representation'){
+ const r=await fetch(U+p,{method:m,headers:{apikey:K,'Content-Type':'application/json',Prefer:pr},body:b?JSON.stringify(b):undefined});
+ const t=await r.text();
+ if(!r.ok){alert('Ошибка: '+t);throw new Error(t)}
+ return t?JSON.parse(t):null}
+const nm=id=>(M.find(x=>x.user_id==id)||{}).name||'?';
+const act=async f=>{await f();await render()};
+const link=(l,t)=>url(l)?`<a href="${esc(l)}" target="_blank">${esc(t)}</a>`:esc(t);
+const del=(t,id)=>confirm('Удалить?')&&act(()=>api(t+'?id=eq.'+id,'DELETE'));
+const T=[['places','📍','Места'],['food','🍽','Еда'],['home','🏠','Жильё'],['money','💰','Деньги'],['wish','🎁','Желания']];
+const R={};
+
+function nav(){$('#nav').innerHTML=T.map(t=>`<button class="${t[0]==tab?'on':''}" onclick="go('${t[0]}')">${t[1]}<br>${t[2]}</button>`).join('')}
+async function go(t){tab=t;nav();await render()}
+async function render(){M=await api('members?select=*&order=name');$('#app').innerHTML=await R[tab]()}
+
+/* Места */
+R.places=async()=>{
+ const [P,V]=await Promise.all([api('places?select=*&order=id'),api('votes?select=*')]);
+ const sc=p=>V.filter(x=>x.place_id==p.id).reduce((s,x)=>s+x.value,0);
+ const card=p=>{const v=V.filter(x=>x.place_id==p.id),c=n=>v.filter(x=>x.value==n).length,my=(v.find(x=>x.user_id==me.id)||{}).value,s=sc(p);
+  return `<div class="card"><b>${esc(p.title)}</b> ${url(p.link)?link(p.link,'ссылка'):''}
+  <div class="hint">добавил(а) ${esc(nm(p.added_by))} · итог ${s>0?'+':''}${s}</div>
+  <div>${[[1,'👍'],[0,'😐'],[-1,'👎']].map(([n,e])=>`<button class="g ${my===n?'on':''}" onclick="vote(${p.id},${n})">${e} ${c(n)}</button>`).join('')}</div>
+  <div>${p.status=='discussing'?`<button onclick="st(${p.id},'chosen')">✅ Выбрать</button><button class="g" onclick="st(${p.id},'rejected')">❌ Отклонить</button>`:`<button class="g" onclick="st(${p.id},'discussing')">↩ В обсуждение</button>`}<button class="g" onclick="del('places',${p.id})">🗑</button></div></div>`};
+ const by=s=>P.filter(p=>p.status==s).sort((a,b)=>sc(b)-sc(a)).map(card).join('')||'<p class="hint">Пока пусто</p>';
+ return `<h2>✅ Идём сюда</h2>${by('chosen')}<h2>🗳 Обсуждаем</h2>${by('discussing')}
+ <h2>➕ Новое место</h2><input id="t" placeholder="Название"><input id="l" placeholder="Ссылка (необязательно)"><button onclick="addPlace()">Добавить место</button>
+ <h2>❌ Отклонено</h2>${by('rejected')}`};
+const vote=(id,n)=>act(()=>api('votes?on_conflict=place_id,user_id','POST',{place_id:id,user_id:me.id,value:n},'resolution=merge-duplicates,return=minimal'));
+const st=(id,s)=>act(()=>api('places?id=eq.'+id,'PATCH',{status:s}));
+const addPlace=()=>val('t')&&act(()=>api('places','POST',{title:val('t'),link:val('l'),added_by:me.id}));
+
+/* Еда */
+R.food=async()=>{
+ const [D,P]=await Promise.all([api('dishes?select=*&order=id'),api('products?select=*&order=bought,id')]);
+ return `<h2>🍽 Меню</h2>${D.map(d=>`<div class="card"><b>${esc(d.title)}</b> <span class="hint">готовит: ${esc(d.cook?nm(d.cook):'—')}</span>
+  <div class="hint" style="white-space:pre-line">${esc(typeof d.ingredients=='string'?d.ingredients:'')}</div>
+  <button onclick="cook(${d.id})">🍳 Беру</button><button class="g" onclick="addIng(${d.id})">🛒 В продукты</button><button class="g" onclick="del('dishes',${d.id})">🗑</button></div>`).join('')||'<p class="hint">Блюд пока нет</p>'}
+ <input id="dt" placeholder="Блюдо"><textarea id="di" rows="3" placeholder="Продукты по строке: название, количество, единица&#10;например: лук, 2, шт"></textarea><button onclick="addDish()">Добавить блюдо</button>
+ <h2>🛒 Продукты</h2>${P.map(p=>`<div class="card"><label class="${p.bought?'done':''}"><input type="checkbox" style="width:auto" ${p.bought?'checked':''} onchange="buy(${p.id},this.checked)"> ${esc(p.name)} — <b>${p.qty==null?'':+p.qty} ${esc(p.unit)}</b></label>
+  <div><button class="g" onclick="buyer(${p.id})">${p.buyer?'🛍 '+esc(nm(p.buyer)):'Куплю я'}</button><button class="g" onclick="del('products',${p.id})">🗑</button></div></div>`).join('')||'<p class="hint">Список пуст</p>'}
+ <div class="card"><input id="pn" placeholder="Продукт"><input id="pq" type="number" inputmode="decimal" placeholder="Количество"><input id="pu" placeholder="Единица (кг, шт, л)"><button onclick="addProd()">Добавить продукт</button></div>`};
+const addDish=()=>val('dt')&&act(()=>api('dishes','POST',{title:val('dt'),ingredients:val('di')}));
+const cook=id=>act(()=>api('dishes?id=eq.'+id,'PATCH',{cook:me.id}));
+const buy=(id,v)=>act(()=>api('products?id=eq.'+id,'PATCH',{bought:v}));
+const buyer=id=>act(()=>api('products?id=eq.'+id,'PATCH',{buyer:me.id}));
+const addProd=()=>val('pn')&&act(()=>api('products','POST',{name:val('pn'),qty:parseFloat(val('pq'))||null,unit:val('pu')}));
+async function addIng(id){
+ if(!confirm('Добавить продукты этого блюда в список?'))return;
+ const d=(await api('dishes?id=eq.'+id))[0],ex=await api('products?select=*');
+ for(const line of String(d.ingredients||'').split('\n')){
+  const [n,q,u]=line.split(',').map(s=>s.trim());if(!n)continue;
+  const qty=parseFloat((q||'').replace(',','.'))||null,f=ex.find(p=>!p.bought&&p.name.toLowerCase()==n.toLowerCase()&&(p.unit||'')==(u||''));
+  if(f&&qty&&f.qty!=null){f.qty=+f.qty+qty;await api('products?id=eq.'+f.id,'PATCH',{qty:f.qty})}
+  else{const r=await api('products','POST',{name:n,qty,unit:u||'',dish_id:id});ex.push(r[0])}}
+ render()}
+
+/* Жильё */
+R.home=async()=>{
+ const h=(await api('housing?id=eq.1'))[0]||{};
+ const f=(k,l)=>`<label class="hint">${l}</label><input id="h_${k}" value="${esc(h[k])}">`;
+ return `<h2>🏠 Жильё</h2><div class="card">${f('address','Адрес')}${f('checkin','Заезд и выезд')}${f('host','Контакт хозяина')}${f('wifi','Wi-Fi')}
+ <label class="hint">Заметки (как найти, этаж)</label><textarea id="h_notes" rows="4">${esc(h.notes)}</textarea>
+ <button onclick="saveH()">Сохранить</button>${h.address?'<button class="g" onclick="openMap()">🗺 На карте</button>':''}</div>`};
+const saveH=()=>act(()=>api('housing?id=eq.1','PATCH',{address:val('h_address'),checkin:val('h_checkin'),host:val('h_host'),wifi:val('h_wifi'),notes:val('h_notes')}));
+function openMap(){const u='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(val('h_address'));tg?tg.openLink(u):open(u)}
+
+/* Деньги */
+R.money=async()=>{
+ const E=await api('expenses?select=*&order=id.desc');
+ const tot=E.reduce((s,e)=>s+ +e.amount,0),sh=tot/(M.length||1);
+ const bal=M.map(m=>({n:m.name,b:E.filter(e=>e.paid_by==m.user_id).reduce((s,e)=>s+ +e.amount,0)-sh}));
+ const D=bal.filter(x=>x.b<-0.5),C=bal.filter(x=>x.b>0.5),L=[];
+ for(const d of D)for(const c of C){const x=Math.min(-d.b,c.b);if(x>0.5){L.push(`${esc(d.n)} → ${esc(c.n)}: <b>${Math.round(x)}</b>`);d.b+=x;c.b-=x}}
+ return `<h2>💰 Расходы</h2><div class="card"><b>Всего: ${Math.round(tot)}</b> <span class="hint">(делим на ${M.length})</span><br>${L.length?L.join('<br>'):'<span class="hint">Все в расчёте</span>'}</div>
+ ${E.map(e=>`<div class="card">${esc(e.title)}: <b>${+e.amount}</b> <span class="hint">платил(а) ${esc(nm(e.paid_by))}</span> <button class="g" onclick="del('expenses',${e.id})">🗑</button></div>`).join('')}
+ <h2>➕ Новая трата</h2><input id="et" placeholder="За что"><input id="ea" type="number" inputmode="decimal" placeholder="Сумма"><button onclick="addExp()">Добавить (платил(а) я)</button>`};
+const addExp=()=>val('et')&&+val('ea')&&act(()=>api('expenses','POST',{title:val('et'),amount:+val('ea'),paid_by:me.id}));
+
+/* Желания */
+R.wish=async()=>{
+ const W=await api('wishes?select=*&order=id');
+ return '<h2>🎁 Желания</h2>'+M.map(m=>{const mine=m.user_id==me.id,ws=W.filter(w=>w.owner_id==m.user_id);
+  return `<div class="card"><b>${esc(m.name)}</b>${mine?' (я)':''}<br>
+  ${mine?`<input id="wu" placeholder="Ссылка на мой вишлист" value="${esc(m.wishlist_url)}"><button class="g" onclick="saveWu()">Сохранить ссылку</button>`:(url(m.wishlist_url)?link(m.wishlist_url,'Открыть вишлист'):'<span class="hint">Ссылки пока нет</span>')}
+  ${ws.map(w=>`<div>• ${link(w.link,w.title)} ${mine?`<button class="g" onclick="del('wishes',${w.id})">🗑</button>`:(w.reserved_by?(w.reserved_by==me.id?`<button class="g" onclick="rsv(${w.id},1)">Отменить бронь</button>`:'<span class="hint">🎁 уже берут</span>'):`<button class="g" onclick="rsv(${w.id})">🎁 Беру</button>`)}</div>`).join('')}
+  ${mine?'<input id="wt" placeholder="Что хочу"><input id="wl" placeholder="Ссылка (необязательно)"><button onclick="addW()">Добавить</button>':''}</div>`}).join('')};
+const saveWu=()=>act(()=>api('members?user_id=eq.'+me.id,'PATCH',{wishlist_url:val('wu')}));
+const addW=()=>val('wt')&&act(()=>api('wishes','POST',{owner_id:me.id,title:val('wt'),link:val('wl')}));
+const rsv=(id,off)=>act(()=>api('wishes?id=eq.'+id,'PATCH',{reserved_by:off?null:me.id}));
+
+/* Старт */
+(async()=>{
+ const u=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;
+ if(u)me={id:String(u.id),name:u.first_name||'Без имени'};
+ else{let id=localStorage.getItem('uid');if(!id){id='w'+Date.now();localStorage.setItem('uid',id);localStorage.setItem('nm',prompt('Как тебя зовут?')||'Гость')}me={id,name:localStorage.getItem('nm')}}
+ await api('members?on_conflict=user_id','POST',{user_id:me.id,name:me.name},'resolution=merge-duplicates,return=minimal');
+ nav();await render();
+ setInterval(()=>{if(!/INPUT|TEXTAREA/.test(document.activeElement.tagName))render()},15000)})();
+</script></body></html>
